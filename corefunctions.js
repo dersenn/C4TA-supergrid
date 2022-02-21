@@ -8,19 +8,20 @@ function coinToss(chance) {
 }
 
 // Draw Guides for a grid
-function drawGuides(cols,rows) {
+// WebGL Edition
+function drawGuides(zero, cols,rows) {
     push()
-    stroke(128)
+    stroke(0, 255, 0, .5)
     let xStep = width / cols
     let yStep = height / rows
     for (let x = 0; x < width; x += xStep) {
         if (x > 0) {
-            line(x,0,x,height)
+            line(zero.x + x, zero.y, zero.x + x, zero.y + height)
         }
     }
     for (let y = 0; y < height; y += yStep) {
         if (y > 0) {
-            line(0,y,width,y)
+            line(zero.x, zero.y + y, zero.y + width, zero.y + y)
         }
     }
     pop()

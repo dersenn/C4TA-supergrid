@@ -5,113 +5,86 @@ let canH = container.offsetHeight //canvas Height
 let canMax = Math.max(canW, canH) //longer canvas side
 let canMin = Math.min(canW, canH) //shorter canvas side
 
+// PRELOAD
+  // SETTINGS.JSON
+  // SLIDES.JSON
+  // FONTS?
+
+
 // Global Vars
-let nRows = 5
-let nCols = 5
-
-let tileMin = canW / 100
-let tileMax = canW - ((nCols - 1) * tileMin)
-
-let tileW = canW / nCols
-let tileH = canH / nRows
-
-let tiles = simpleGrid(0, 0, nCols, nRows, canW, canH, []) 
-
-
-// Simple Grid Generator
-function simpleGrid(zeroX, zeroY, gridCols, gridRows, gridW, gridH, arr) {
-    let tileW = gridW / gridCols
-    let tileH = gridH / gridRows
-
-    let myTiles = arr
-    for (let y = 0; y < gridRows; y++) {
-        myTiles[y] = []
-        let yOff = zeroY + (y * tileH)
-        for (let x = 0; x < gridCols; x++) {
-            let xOff = zeroX + (x * tileW)
-            myTiles[y].push( new Tile(x, y, xOff, yOff, tileW, tileH))
-        }
-    }
-    return myTiles
+let zero = {
+  x: -canW/2,
+  y: -canH/2,
+  z: 0
 }
 
+let slide = 0
 
+// settings
+let set = {
+  slide: slide,
+  nCols: 1,
+  nRows: 1
+}
 
 // p5 Setup
 function setup() {
   // setup canvas in container
-  let canvas = createCanvas(canW, canH)
+  let canvas = createCanvas(canW, canH, WEBGL)
   canvas.parent(container)
-
-  ellipseMode(CORNER)
-
 }
-
-// console.log(tiles)
-
-let set = {
-  ampT: .005,
-  ampX: .1,
-  ampY: .1
-} //settings
 
 
 // p5 Draw
 function draw() {
   background(0)
-  let speed = frameCount * set.ampT
 
-  let newY = 0
-  let restY = canH
 
-  let totY = 0
-  for (let nX = 0; nX < tiles.length; nX++) {
-    totY += noise(nX, nX * set.ampY, speed)
-  }
 
-  for (let x = 0; x < tiles.length; x++) {
+  drawGuides(zero, set.nCols, set.nRows)
+  // drawCenter()
 
-    let newX = 0
-    let restX = canW
-    let newH //= map(w, 0, totY, 0, canH)
-
-    // pre-calculating the total width of all the noise values.
-    // isn't there a better way?
-    let totX = 0
-    for (let nY = 0; nY < tiles[x].length; nY++) {
-      totX += noise(x * set.ampX, nY * set.ampY, speed)
-    }
-
-    for (let y = 0; y < tiles[x].length; y++) {
-
-      let w = noise(x * set.ampX, y * set.ampY, speed)
-      // console.log(n)
-      let newW = map(w, 0, totX, 0, canW)
-      // newH = map(w, 0, totY, 0, canH)
-
-      let tile = tiles[x][y]
-      tile.update(newX, newY, newW, newH, w)
-      tile.draw()
-
-      newX += newW
-      restX -= newW
-    }
-
-    newY += newH
-    restY -= newH
-  }
-
+  console.log(set.slide, set.nCols, set.nRows)
 }
 
 
-
-
-
-function windowResized(){
-  resizeCanvas(windowWidth, windowHeight);
+function mouseClicked() {
+  // do shit with the tile
 }
 
 
+function keyPressed() {
+
+  // previous/nex slide
+  if (key === 'n') {
+    set.slide++
+  } else if (key === 'p') {
+    if (set.slide > 0) {
+      set.slide--
+    }
+  }
+
+
+  if (keyCode === RIGHT_ARROW) {
+    set.nCols++
+  } else if (keyCode === LEFT_ARROW) {
+    if (set.nCols > 0) {
+      set.nCols--
+    }
+  } else if (keyCode === DOWN_ARROW) {
+    set.nRows++
+  } else if (keyCode === UP_ARROW) {
+    if (set.nRows > 0) {
+      set.nRows--
+    }
+  }
+}
+
+
+function drawCenter() {
+  fill(255, 0, 0)
+  ellipse(zero.x,zero.y,20,20)
+}
 
 
 // my only friend, the end.
