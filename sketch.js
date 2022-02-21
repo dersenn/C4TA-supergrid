@@ -18,14 +18,24 @@ let zero = {
   z: 0
 }
 
+
+// presentation vars
 let slide = 0
+let looping = true
+
 
 // settings
 let set = {
   slide: slide,
   nCols: 1,
-  nRows: 1
+  nRows: 1,
 }
+
+let theGrid = new superGrid(zero.x, zero.y, canW, canH, set.nCols, set.nRows)
+
+// console.log(theGrid)
+
+let tiles = []
 
 // p5 Setup
 function setup() {
@@ -39,12 +49,18 @@ function setup() {
 function draw() {
   background(0)
 
+  tiles = recursiveGrid(theGrid.x, theGrid.y, theGrid.c, theGrid.r, theGrid.w, theGrid.h, 1, 1, [])
+  console.log(tiles)
+
+  for (let t = 0; t < tiles.length; t++) {
+    tiles[t].draw()
+  }
 
 
-  drawGuides(zero, set.nCols, set.nRows)
+  // drawGuides(zero, theGrid.c, theGrid.r)
   // drawCenter()
 
-  console.log(set.slide, set.nCols, set.nRows)
+  // console.log(set.slide, theGrid.c, theGrid.r, 'looping: ' + looping)
 }
 
 
@@ -54,6 +70,13 @@ function mouseClicked() {
 
 
 function keyPressed() {
+  if (key === 'l' && looping) {
+    noLoop()
+    looping = false
+  } else if (key === 'l' && !looping) {
+    loop()
+    looping = true
+  }
 
   // previous/nex slide
   if (key === 'n') {
@@ -66,16 +89,16 @@ function keyPressed() {
 
 
   if (keyCode === RIGHT_ARROW) {
-    set.nCols++
+    theGrid.c++
   } else if (keyCode === LEFT_ARROW) {
-    if (set.nCols > 0) {
-      set.nCols--
+    if (theGrid.c > 0) {
+      theGrid.c--
     }
   } else if (keyCode === DOWN_ARROW) {
-    set.nRows++
+    theGrid.r++
   } else if (keyCode === UP_ARROW) {
-    if (set.nRows > 0) {
-      set.nRows--
+    if (theGrid.r > 0) {
+      theGrid.r--
     }
   }
 }
