@@ -32,7 +32,6 @@ let set = {
 }
 
 let theGrid = new superGrid(zero.x, zero.y, canW, canH, set.nCols, set.nRows)
-
 // console.log(theGrid)
 
 let tiles = []
@@ -42,6 +41,8 @@ function setup() {
   // setup canvas in container
   let canvas = createCanvas(canW, canH, WEBGL)
   canvas.parent(container)
+
+  ellipseMode(CORNER)
 }
 
 
@@ -50,7 +51,7 @@ function draw() {
   background(0)
 
   tiles = recursiveGrid(theGrid.x, theGrid.y, theGrid.c, theGrid.r, theGrid.w, theGrid.h, 1, 1, [])
-  console.log(tiles)
+  // console.log(tiles)
 
   for (let t = 0; t < tiles.length; t++) {
     tiles[t].draw()
@@ -60,7 +61,7 @@ function draw() {
   // drawGuides(zero, theGrid.c, theGrid.r)
   // drawCenter()
 
-  // console.log(set.slide, theGrid.c, theGrid.r, 'looping: ' + looping)
+  console.log(set.slide, theGrid.c, theGrid.r, 'looping: ' + looping)
 }
 
 
@@ -91,13 +92,13 @@ function keyPressed() {
   if (keyCode === RIGHT_ARROW) {
     theGrid.c++
   } else if (keyCode === LEFT_ARROW) {
-    if (theGrid.c > 0) {
+    if (theGrid.c > 1) {
       theGrid.c--
     }
   } else if (keyCode === DOWN_ARROW) {
     theGrid.r++
   } else if (keyCode === UP_ARROW) {
-    if (theGrid.r > 0) {
+    if (theGrid.r > 1) {
       theGrid.r--
     }
   }
