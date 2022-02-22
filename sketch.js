@@ -29,7 +29,8 @@ let set = {
   slide: slide,
   nCols: 1,
   nRows: 1,
-  guides: true
+  guides: false,
+  orbit: false
 }
 
 let theGrid = new superGrid(zero.x, zero.y, canW, canH, set.nCols, set.nRows)
@@ -50,6 +51,10 @@ function setup() {
 // p5 Draw
 function draw() {
   background(0)
+
+  if (set.orbit) {
+    orbitControl(1,1)
+  }
 
   tiles = recursiveGrid(theGrid.x, theGrid.y, theGrid.c, theGrid.r, theGrid.w, theGrid.h, 1, 1, [])
   // console.log(tiles)
@@ -93,12 +98,22 @@ function keyPressed() {
 
   // guides on/off
   if (key === 'g') {
-    if (!set.guides) set.guides = true
-  } else {
-    set.guides = false
+    if (!set.guides) {
+      set.guides = true
+    } else {
+      set.guides = false
+    }
   }
 
-// var variable = (condition) ? (true block) : ((condition2) ? (true block2) : (else block2))
+  // orbit on/off
+  if (key === 'o') {
+    if (!set.orbit) {
+      set.orbit = true 
+    } else {
+      set.orbit = false
+    }
+  }
+
 
   if (keyCode === RIGHT_ARROW) {
     theGrid.c++
