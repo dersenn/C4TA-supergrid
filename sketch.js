@@ -29,6 +29,7 @@ let set = {
   slide: slide,
   nCols: 1,
   nRows: 1,
+  guides: true
 }
 
 let theGrid = new superGrid(zero.x, zero.y, canW, canH, set.nCols, set.nRows)
@@ -57,8 +58,9 @@ function draw() {
     tiles[t].draw()
   }
 
-
-  // drawGuides(zero, theGrid.c, theGrid.r)
+  if (set.guides) {
+    drawGuides(zero, theGrid.c, theGrid.r)
+  }
   // drawCenter()
 
   console.log(set.slide, theGrid.c, theGrid.r, 'looping: ' + looping)
@@ -69,8 +71,9 @@ function mouseClicked() {
   // do shit with the tile
 }
 
-
+// slides control functions
 function keyPressed() {
+  // loop on/off
   if (key === 'l' && looping) {
     noLoop()
     looping = false
@@ -79,7 +82,7 @@ function keyPressed() {
     looping = true
   }
 
-  // previous/nex slide
+  // previous/next slide
   if (key === 'n') {
     set.slide++
   } else if (key === 'p') {
@@ -88,6 +91,14 @@ function keyPressed() {
     }
   }
 
+  // guides on/off
+  if (key === 'g') {
+    if (!set.guides) set.guides = true
+  } else {
+    set.guides = false
+  }
+
+// var variable = (condition) ? (true block) : ((condition2) ? (true block2) : (else block2))
 
   if (keyCode === RIGHT_ARROW) {
     theGrid.c++
