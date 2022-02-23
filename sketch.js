@@ -27,14 +27,19 @@ let looping = true
 // settings
 let set = {
   slide: slide,
-  nCols: 1,
-  nRows: 1,
-  guides: false,
-  orbit: false
+  c: 1,
+  r: 1,
+  guides: true,
+  orbit: false,
+  initLevel: 1,
+  maxLevel: 3,
+  subdivide: false,
+  fps: 5,
+  fill: false
 }
 
-let theGrid = new superGrid(zero.x, zero.y, canW, canH, set.nCols, set.nRows)
-// console.log(theGrid)
+let grid
+// let grid = new superGrid(zero.x, zero.y, canW, canH, set)
 
 let tiles = []
 
@@ -44,6 +49,11 @@ function setup() {
   let canvas = createCanvas(canW, canH, WEBGL)
   canvas.parent(container)
 
+  frameRate(set.fps)
+
+  makeGrid()
+  // makeTiles()
+
   ellipseMode(CORNER)
 }
 
@@ -51,24 +61,27 @@ function setup() {
 // p5 Draw
 function draw() {
   background(0)
+  frameRate(set.fps)
 
   if (set.orbit) {
     orbitControl(1,1)
   }
 
-  tiles = recursiveGrid(theGrid.x, theGrid.y, theGrid.c, theGrid.r, theGrid.w, theGrid.h, 1, 1, [])
-  // console.log(tiles)
-
   for (let t = 0; t < tiles.length; t++) {
+    tiles[t].update(set.fill)
     tiles[t].draw()
   }
 
   if (set.guides) {
-    drawGuides(zero, theGrid.c, theGrid.r)
+    drawGuides(zero, grid.c, grid.r)
   }
   // drawCenter()
 
-  console.log(set.slide, theGrid.c, theGrid.r, 'looping: ' + looping)
+  makeGrid()
+  // makeTiles()
+
+
+  // console.log(set.slide, theGrid.c, theGrid.r, 'looping: ' + looping)
 }
 
 
@@ -114,22 +127,52 @@ function keyPressed() {
     }
   }
 
+  // subdivide on/off
+  if (key === 's') {
+    if (!set.subdivide) {
+      set.subdivide = true 
+    } else {
+      set.subdivide = false
+    }
+  }
 
+  // fill on/off
+  if (key === 'f') {
+    if (!set.fill) {
+      set.fill = true 
+    } else {
+      set.fill = false
+    }
+  }
+
+  // increase/decrease cols/rows
   if (keyCode === RIGHT_ARROW) {
-    theGrid.c++
+    set.c++
+    makeGrid()
   } else if (keyCode === LEFT_ARROW) {
-    if (theGrid.c > 1) {
-      theGrid.c--
+    if (set.c > 1) {
+      set.c--
+      makeGrid()
     }
   } else if (keyCode === DOWN_ARROW) {
-    theGrid.r++
+    set.r++
+    makeGrid()
   } else if (keyCode === UP_ARROW) {
-    if (theGrid.r > 1) {
-      theGrid.r--
+    if (set.r > 1) {
+      set.r--
+      makeGrid()
     }
   }
 }
 
+function makeGrid() {
+  grid = new superGrid(zero.x, zero.y, canW, canH, set)
+  makeTiles()
+}
+
+function makeTiles() {
+  tiles = recursiveGrid(grid.x, grid.y, grid.c, grid.r, grid.w, grid.h, grid.initLevel, grid.maxLevel, [], 30)
+}
 
 function drawCenter() {
   fill(255, 0, 0)

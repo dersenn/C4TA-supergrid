@@ -21,7 +21,7 @@ function drawGuides(zero, cols,rows) {
     }
     for (let y = 0; y < height; y += yStep) {
         if (y > 0) {
-            line(zero.x, zero.y + y, zero.y + width, zero.y + y)
+            line(zero.x, zero.y + y, zero.x + width, zero.y + y)
         }
     }
     pop()
@@ -45,7 +45,7 @@ function simpleGrid(zeroX, zeroY, gridCols, gridRows, gridW, gridH, arr) {
 }
 
 // Recursive Grid Generator
-function recursiveGrid(zeroX, zeroY, gridCols, gridRows, gridW, gridH, initLevel, maxLevel, arr) {
+function recursiveGrid(zeroX, zeroY, gridCols, gridRows, gridW, gridH, initLevel, maxLevel, arr, chance) {
     let tileW = gridW / gridCols
     let tileH = gridH / gridRows
 
@@ -58,10 +58,10 @@ function recursiveGrid(zeroX, zeroY, gridCols, gridRows, gridW, gridH, initLevel
                 let yOff = zeroY + (y * tileH)
 
                 if (initLevel < maxLevel) {
-                    if (coinToss(50)) {
-                        myTiles.push( new Tile(xOff, yOff, tileW, tileH))
+                    if (coinToss(chance)) {
+                        recursiveGrid(xOff, yOff, floor(random(1, gridCols)), floor(random(1, gridRows)), tileW, tileH, initLevel+1, maxLevel, myTiles, chance)
                     } else {
-                        recursiveGrid(xOff, yOff, gridCols, gridRows, tileW, tileH, initLevel+1, maxLevel, myTiles)
+                        myTiles.push( new Tile(xOff, yOff, tileW, tileH))
                     }
                 } else {
                     myTiles.push( new Tile(xOff, yOff, tileW, tileH))
