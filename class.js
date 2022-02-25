@@ -66,7 +66,7 @@ class Tile {
   }
 
   update(fill, f, t) {
-    let n = noise(f * t * .005, t * .0001)
+    let n = noise(f * (t + 1)* .001, t * .0001)
     if (fill) {
       this.bg = n * 255//random(255)
     }
