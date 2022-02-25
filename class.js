@@ -1,18 +1,25 @@
 class superGrid {
   constructor(x, y, w, h, settings) {
-    this.x = x,
-    this.y = y,
-    this.w = w,
-    this.h = h,
-    this.set = settings,
-    this.c = this.set.c,
-    this.r = this.set.r,
-    this.subdivide = this.set.subdivide,
-    this.initLevel = this.set.initLevel,
+    this.x = x
+    this.y = y
+    this.w = w
+    this.h = h
+    this.set = settings
+    this.c = this.set.c
+    this.r = this.set.r
+    this.subdivide = this.set.subdivide
+    this.initLevel = this.set.initLevel
     this.maxLevel = this.subdivide ? this.set.maxLevel : 1
 
     // this.maxLevel = this.set.maxLevel,
-    // this.tiles = []
+    this.tiles = []
+  }
+
+
+  // HOW DO I INTEGRATE THIS...
+  createTiles() {
+    this.tileW = this.w / this.c
+    this.tileH = this.h / this.r
   }
 
   // Recursive Grid Generator
@@ -51,20 +58,21 @@ class superGrid {
 
 class Tile {
   constructor(x, y, w, h) {
-    this.x = x,
-    this.y = y,
-    this.w = w,
-    this.h = h,
+    this.x = x
+    this.y = y
+    this.w = w
+    this.h = h
     this.bg = color(0,0,0,1)
   }
 
-  update(fill) {
+  update(fill, f, t) {
+    let n = noise(f * t * .005, t * .0001)
     if (fill) {
-      this.bg = random(255)
+      this.bg = n * 255//random(255)
     }
   }
 
-  draw() {
+  draw(f) {
     stroke(255, 0, 0)
     noStroke()
     fill(this.bg)

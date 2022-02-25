@@ -68,8 +68,8 @@ function draw() {
   }
 
   for (let t = 0; t < tiles.length; t++) {
-    tiles[t].update(set.fill)
-    tiles[t].draw()
+    tiles[t].update(set.fill, frameCount, t)
+    tiles[t].draw(frameCount)
   }
 
   if (set.guides) {
