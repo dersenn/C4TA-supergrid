@@ -61,10 +61,10 @@ function recursiveGrid(zeroX, zeroY, gridCols, gridRows, gridW, gridH, initLevel
                     if (coinToss(chance)) {
                         recursiveGrid(xOff, yOff, floor(random(1, gridCols)), floor(random(1, gridRows)), tileW, tileH, initLevel+1, maxLevel, myTiles, chance)
                     } else {
-                        myTiles.push( new Tile(xOff, yOff, tileW, tileH))
+                        myTiles.push( new Tile(xOff, yOff, tileW, tileH, x, y))
                     }
                 } else {
-                    myTiles.push( new Tile(xOff, yOff, tileW, tileH))
+                    myTiles.push( new Tile(xOff, yOff, tileW, tileH, x, y))
                 }
 
             }

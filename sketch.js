@@ -5,43 +5,42 @@ let canH = container.offsetHeight //canvas Height
 let canMax = Math.max(canW, canH) //longer canvas side
 let canMin = Math.min(canW, canH) //shorter canvas side
 
-// PRELOAD
-  // SETTINGS.JSON
-  // SLIDES.JSON
-  // FONTS?
-
 
 // Global Vars
 let zero = {
   x: -canW/2,
   y: -canH/2,
-  z: 0
+  z: -canMin/2
 }
 
-
 // presentation vars
-let slide = 0
 let looping = true
 
+let init = {
+  c: 3,
+  r: 3,
+  initLevel: 1,
+  depth: 3,
+  subdivide: false,
+  chance: 50,
+  fill: true,
+  type: 'noise',
+  shape: 'switch',
+  color: false,
+  amp: .2,
+  three: true
+}
 
 // settings
 let set = {
-  slide: slide,
-  c: 1,
-  r: 1,
   guides: true,
   orbit: false,
-  initLevel: 1,
-  maxLevel: 3,
-  subdivide: false,
-  fps: 5,
-  fill: false
+  fps: 60,
+  speed: 0.01
 }
 
-let grid
-// let grid = new superGrid(zero.x, zero.y, canW, canH, set)
+let grid = new superGrid(zero.x, zero.y, canW, canH, init)
 
-let tiles = []
 
 // p5 Setup
 function setup() {
@@ -49,10 +48,8 @@ function setup() {
   let canvas = createCanvas(canW, canH, WEBGL)
   canvas.parent(container)
 
-  frameRate(set.fps)
-
-  makeGrid()
-  // makeTiles()
+  grid.makeGrid()
+  console.log(grid)
 
   ellipseMode(CORNER)
 }
@@ -64,57 +61,43 @@ function draw() {
   frameRate(set.fps)
 
   if (set.orbit) {
-    orbitControl(1,1)
+    orbitControl(1,1,.1)
   }
 
-  for (let t = 0; t < tiles.length; t++) {
-    tiles[t].update(set.fill, frameCount, t)
-    tiles[t].draw(frameCount)
+  for (let t = 0; t < grid.tiles.length; t++) {
+    let tile = grid.tiles[t]
+    tile.update(frameCount, set.speed)
+    tile.draw()
   }
 
   if (set.guides) {
-    drawGuides(zero, grid.c, grid.r)
+    drawGuides(zero, grid.set.c, grid.set.r)
   }
-  // drawCenter()
 
-  makeGrid()
-  // makeTiles()
-
-
-  // console.log(set.slide, theGrid.c, theGrid.r, 'looping: ' + looping)
 }
 
 
-function mouseClicked() {
-  // do shit with the tile
-}
-
-// slides control functions
+// controls
 function keyPressed() {
   // loop on/off
   if (key === 'l' && looping) {
     noLoop()
     looping = false
+    console.log('loop off')
   } else if (key === 'l' && !looping) {
     loop()
     looping = true
-  }
-
-  // previous/next slide
-  if (key === 'n') {
-    set.slide++
-  } else if (key === 'p') {
-    if (set.slide > 0) {
-      set.slide--
-    }
+    console.log('loop on')
   }
 
   // guides on/off
   if (key === 'g') {
     if (!set.guides) {
       set.guides = true
-    } else {
+      console.log('guides on')
+   } else {
       set.guides = false
+      console.log('guides off')
     }
   }
 
@@ -122,57 +105,60 @@ function keyPressed() {
   if (key === 'o') {
     if (!set.orbit) {
       set.orbit = true 
-    } else {
+      console.log('orbit control on')
+   } else {
       set.orbit = false
+      console.log('orbit control off')
     }
   }
 
   // subdivide on/off
   if (key === 's') {
-    if (!set.subdivide) {
-      set.subdivide = true 
-    } else {
-      set.subdivide = false
+    if (!grid.set.subdivide) {
+      grid.set.subdivide = true
+      console.log('subdivide on')
+   } else {
+      grid.set.subdivide = false
+      console.log('subdivide off')
     }
   }
 
   // fill on/off
   if (key === 'f') {
-    if (!set.fill) {
-      set.fill = true 
-    } else {
-      set.fill = false
+    if (!grid.set.fill) {
+      grid.set.fill = true 
+      console.log('fill on')
+   } else {
+      grid.set.fill = false
+      console.log('fill off')
     }
+  }
+
+  // reload
+ if (key === 'r') {
+    grid.makeGrid()
   }
 
   // increase/decrease cols/rows
   if (keyCode === RIGHT_ARROW) {
-    set.c++
-    makeGrid()
+    grid.set.c++
+    grid.makeGrid()
   } else if (keyCode === LEFT_ARROW) {
-    if (set.c > 1) {
-      set.c--
-      makeGrid()
+    if (grid.set.c > 1) {
+      grid.set.c--
+      grid.makeGrid()
     }
   } else if (keyCode === DOWN_ARROW) {
-    set.r++
-    makeGrid()
+    grid.set.r++
+    grid.makeGrid()
   } else if (keyCode === UP_ARROW) {
-    if (set.r > 1) {
-      set.r--
-      makeGrid()
+    if (grid.set.r > 1) {
+      grid.set.r--
+      grid.makeGrid()
     }
   }
 }
 
-function makeGrid() {
-  grid = new superGrid(zero.x, zero.y, canW, canH, set)
-  makeTiles()
-}
-
-function makeTiles() {
-  tiles = recursiveGrid(grid.x, grid.y, grid.c, grid.r, grid.w, grid.h, grid.initLevel, grid.maxLevel, [], 30)
-}
 
 function drawCenter() {
   fill(255, 0, 0)
