@@ -13,22 +13,19 @@ let zero = {
   z: -canMin/2
 }
 
-// presentation vars
 let looping = true
 
 let init = {
-  c: 3,
-  r: 3,
+  c: 1,
+  r: 1,
   initLevel: 1,
   depth: 3,
   subdivide: false,
-  chance: 50,
-  fill: true,
-  type: 'noise',
-  shape: 'switch',
-  color: false,
+  chance: 30,
+  fill: false,
+  shape: false,
   amp: .2,
-  three: true
+  three: false
 }
 
 // settings
@@ -41,6 +38,10 @@ let set = {
 
 let grid = new superGrid(zero.x, zero.y, canW, canH, init)
 
+let lightSpeed = .02
+let l1 = {} 
+let l2 = {}
+
 
 // p5 Setup
 function setup() {
@@ -49,7 +50,7 @@ function setup() {
   canvas.parent(container)
 
   grid.makeGrid()
-  console.log(grid)
+  console.log('SUPERGRID READY!')
 
   ellipseMode(CORNER)
 }
@@ -64,10 +65,30 @@ function draw() {
     orbitControl(1,1,.1)
   }
 
+  if (grid.set.three) {
+    l1.x = map(cos(frameCount * lightSpeed),-1,1,-width, width)
+    l1.y = map(sin(frameCount) * lightSpeed,-1,1,-height, height)
+    l2.x = map(sin(frameCount) * lightSpeed,-1,1,-width, width)
+    l2.y = map(cos(frameCount * set.speed),-1,1,-height, height)
+
+    pointLight(0, 255, 0, l1.x, l1.y, 0)
+    pointLight(255, 0, 0, l2.x, l2.y, 0)
+
+    // pointLight(255, 0, 0, 0, 0, 0)
+  }
+
+
   for (let t = 0; t < grid.tiles.length; t++) {
     let tile = grid.tiles[t]
     tile.update(frameCount, set.speed)
     tile.draw()
+    if (grid.subdivide && set.guides) {
+      push()
+      stroke(0,255,0)
+      noFill()
+      rect(tile.x, tile.y, tile.w, tile.h)
+      pop()
+    }
   }
 
   if (set.guides) {
@@ -114,11 +135,11 @@ function keyPressed() {
 
   // subdivide on/off
   if (key === 's') {
-    if (!grid.set.subdivide) {
-      grid.set.subdivide = true
+    if (!grid.subdivide) {
+      grid.subdivide = true
       console.log('subdivide on')
    } else {
-      grid.set.subdivide = false
+      grid.subdivide = false
       console.log('subdivide off')
     }
   }

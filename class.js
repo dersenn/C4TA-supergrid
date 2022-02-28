@@ -6,14 +6,14 @@ class superGrid {
     this.h = h
     this.set = init
     this.tiles
+    this.subdivide = this.set.subdivide
     this.fill = this.set.fill
-    this.type = this.set.type
     this.shape = this.set.shape
   }
 
   makeGrid() {
-    this.depth = this.set.subdivide ? this.set.depth : 1
-    this.tiles = recursiveGrid(this.x, this.y, this.set.c, this.set.r, this.w, this.h, this.set.initLevel, this.depth, [], 30)
+    this.depth = this.subdivide ? this.set.depth : 1
+    this.tiles = recursiveGrid(this.x, this.y, this.set.c, this.set.r, this.w, this.h, this.set.initLevel, this.depth, [], this.set.chance)
   }
 
 }
@@ -23,6 +23,7 @@ class Tile {
   constructor(x, y, w, h, c, r) {
     this.x = x
     this.y = y
+    this.z = zero.z
     this.w = w
     this.h = h
     this.c = c
@@ -48,29 +49,52 @@ class Tile {
     this.a += .05
   }
 
-  draw() {
-    stroke(255, 0, 0)
+  setFill() {
+    if (grid.fill == 'rainbow') {
+      colorMode(HSB, 255)
+    } else {
+      colorMode(RGB, 255)
+    }
     noStroke()
-    if (grid.set.fill) {
-        if (grid.type == 'noise') {
-          this.bg = this.n * 255
-        }
-        if (grid.type == 'random') {
-          this.bg = random(255)
-        }
-        if (grid.type == 'check') {
-          if (this.i % 2 == 0) {
-            this.bg = 255
-          }
-        }
+
+    if (grid.fill === 'noise') {
+      this.bg = this.n * 255
+      this.fg = 255 - this.bg
+    } else if (grid.fill == 'random') {
+      this.bg = random(255)
+      this.fg = 255 - this.bg
+    } else if (grid.fill == 'check') {
+      if (this.i % 2 == 0) {
+        this.bg = 255
+        this.fg = 0
+      } else {
+        this.bg = 0
+        this.fg = 255
+      }
+    } else if (grid.fill == 'rainbow') {
+      this.bg = color(this.n * 255, 255, 255)
+      this.fg = color(255 - this.n * 255, 255, 255)
     } else {
       this.bg = 0
+      this.fg = 255
     }
-    this.fg = 255 - this.bg
+  }
+
+  draw() {
+    this.setFill()
 
     if (grid.shape == 'rect') {
-      fill(this.bg)
-      rect(this.x, this.y, this.w, this.h)
+     if (grid.set.three) {
+        let posZ = map(this.n, 0, 1, this.z, zero.z + this.short)
+        push()
+        translate(this.x+this.w/2, this.y+this.h/2, posZ)
+        ambientMaterial(255,255,255)
+        box(this.w, this.h)
+        pop()
+      } else {
+        fill(this.bg)
+        rect(this.x, this.y, this.w, this.h)
+      }
     }
     if (grid.shape == 'ellipse') {
       fill(this.bg)
@@ -88,8 +112,10 @@ class Tile {
       let posX = map(this.sin, -1, 1, this.x, this.x + this.w - this.short)
       let posY = map(this.cos, -1, 1, this.y, this.y + this.h - this.short)
       if (grid.set.three) {
+        let posZ = map(this.sin, -1, 1, this.z, this.z + this.long)
         push()
-        translate(posX+this.short/2,posY+this.short/2,0)
+        translate(posX+this.short/2, posY+this.short/2, posZ)
+        ambientMaterial(255,255,255)
         sphere(this.short/2)
         pop()
       } else {
