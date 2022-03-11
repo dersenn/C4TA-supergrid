@@ -24,7 +24,7 @@ let init = {
   chance: 30,
   fill: false,
   shape: false,
-  amp: .2,
+  amp: 1,
   three: false
 }
 
