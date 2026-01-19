@@ -1,6 +1,6 @@
 # SUPERGRID - Console Commands & Controls
 
-> *Note: This documentation was reconstructed with AI assistance after the original project was completed.*
+> *Note: This documentation was reconstructed with AI assistance in January 2026. The original project was created in February 2022, with the presentation on March 11, 2022. The Project was created without AI.*
 
 This p5.js project creates an interactive grid system that can be controlled via the browser console and keyboard shortcuts. The presentation concept is to start with a blank canvas and progressively build up complexity.
 
